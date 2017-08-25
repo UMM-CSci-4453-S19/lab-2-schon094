@@ -80,7 +80,7 @@ The theoretical basis behind data storage in RDBMS' are sets (in the mathematica
 
 Whether you listen to this or not, you should read the information at <http://rdbms.opengrass.net/2_Database%20Design/2.1_TermsOfReference/2.1.2_Keys.html>.
 
-##The `SELECT` statement
+## The `SELECT` statement
 
 We're going to start with `SELECT`. But in order to do that we're going to need to make a few tables to
 play with. 
