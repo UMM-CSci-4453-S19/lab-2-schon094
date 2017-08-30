@@ -246,11 +246,11 @@ SELECT DISTINCT id FROM inventory;
 
 #### The REAL power:  **JOINS**
 
-Before proceeding **make a second table** in your database called `prices`.  The price table should have columns named
+Before proceeding **make a second table** in your database called `prices`.  The `prices` table should have columns named
 
 field  | data-type
 -------|---------
-prices | fixed with two decimal places
+price | fixed with two decimal places
 notes  | text
 id     | Same as in `inventory`, but this time do NOT make it `AUTO_INCREMENT` or the `PRIMARY KEY`
 
@@ -476,7 +476,7 @@ Do this tutorial for reinforcement:  http://www.sqlcourse.com/intro.html
     * `id` should be AUTO_INCREMENT, etc
     * There should be 5 or 6 entries in the table
 * Create the `prices` table
-   * Fields should be `prices`, `notes`, `id`
+   * Fields should be `price`, `notes`, `id`
    * data-types of fields should be as indicated in the lab
    * There should be at least 4 entries in the table
 * Do the examples in the [join tutorial](http://www.codinghorror.com/blog/2007/10/a-visual-explanation-of-sql-joins.html)
