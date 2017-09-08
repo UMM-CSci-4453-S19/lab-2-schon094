@@ -461,7 +461,7 @@ Here's a link for more information… but we still need some background before f
 
 We are going to be putting together a sample concession stand/ticket sales application.  Try to figure out who you want to be in your group and spend some time brainstorming the tables and types of interactions that would be necessary.  
 
-Don't invest too heavily in the design.  We will be learning some new technique soon (in particular, we are going to be discussing **data normalization**).  Email me your group name with the subject `cs4453-f17-groups`.
+Don't invest too heavily in the design.  We will be learning some new technique soon (in particular, we are going to be discussing **data normalization**).  Email me your group name with the subject `cs4453-f17-groups` and your group's repository.
 
 ## An SQL tutorial
 
@@ -483,10 +483,11 @@ Do this tutorial for reinforcement:  http://www.sqlcourse.com/intro.html
 * Do the [sqlcourse tutorial](http://www.sqlcourse.com/intro.html)
 * Do some brainstorming **AS A GROUP**
    * Email me your group with the subject `cs4453-f17-groups`.
+   * Include a link to your group's github repository
    * Add a file to your Lab 2 repository named `labs2.txt`:
       * indicating group members
       * indicating your thoughts about the data and user interactions with the data
-   * Include a link to your group's github repository
+   
 
 ## References
 
