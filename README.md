@@ -486,6 +486,7 @@ Do this tutorial for reinforcement:  http://www.sqlcourse.com/intro.html
    * Add a file to your Lab 2 repository named `labs2.txt`:
       * indicating group members
       * indicating your thoughts about the data and user interactions with the data
+   * Include a link to your group's github repository
 
 ## References
 
