@@ -38,7 +38,7 @@ In today's lab.  I want everybody to work separately.  You can ask each other qu
 
 ## A few SQL statements
 
-Below are a few SQL statements and their structure.  Any expression enclosed in angle-brackets is **meant to be replaced**.
+Below are a few SQL statements and their structure.  Any expression enclosed in angle-brackets is **meant to be replaced** (including the angle brackets themselves).
 
 ```
 	UPDATE <table> SET <field>="<value>" WHERE <condition>;
@@ -58,11 +58,15 @@ Here are a few more SQL commands:
 
 The `TRUNCATE TABLE` command will remove all the data in a table without changing its structure (this is **very** useful)
 
-SQL commands are broken into **clauses**.  For example, the command `UPDATE inventory SET unit=NULL WHERE unit="patty";` has  a `SET` clause and a `WHERE` clause.  This will make a lot more sense after you work through the examples provided below.  It is important to note that the **order** of the clauses is important and many SQL statements will **fail** if the clauses appear in the wrong order.
+SQL commands are broken into **clauses**.  For example, the command
+
+```UPDATE inventory SET unit=NULL WHERE unit="patty";``` 
+
+has  a `SET` clause and a `WHERE` clause.  This will make a lot more sense after you work through the examples provided below.  It is important to note that the **order** of the clauses is important and many SQL statements will **fail** if the clauses appear in the wrong order.
 
 ## In class mini-lecture
 
-The theoretical basis behind data storage in RDBMS' are sets (in the mathematical sense).  For those unfamiliar with the idea (or if you just want a refresher), I'll give a mini-lecture at the whiteboard discussing:
+The theoretical basis behind data storage in RDBMS are sets (in the mathematical sense).  For those unfamiliar with the idea (or if you just want a refresher), I'll give a mini-lecture at the whiteboard discussing:
 
 * Mathematical idea of a **set**
 * Some common **set operations**
@@ -70,15 +74,15 @@ The theoretical basis behind data storage in RDBMS' are sets (in the mathematica
    * intersection (meet)
    * set differences
    * Cartesian product
- * The idea of a **universe**
- * The mathematical definition of a **relation**
- * Ordered sets of data as **tuples**
- * Relating these ideas to RDBMS
+* The idea of a **universe**
+* The mathematical definition of a **relation**
+* Ordered sets of data as **tuples**
+* Relating these ideas to RDBMS
    * Table as a relation
    * records (rows) as elements 
    * The need for unique identifies (KEYS and PRIMARY KEYS)
 
-Whether you listen to this or not, you should read the information at <http://rdbms.opengrass.net/2_Database%20Design/2.1_TermsOfReference/2.1.2_Keys.html>.
+Whether you listen to this or not, you should read this discussion of [database keys](http://rdbms.opengrass.net/2_Database%20Design/2.1_TermsOfReference/2.1.2_Keys.html).
 
 ## The `SELECT` statement
 
@@ -92,10 +96,10 @@ Our eventual goal is to make a *point of sales* system, so we are going to start
 1. Log in using your username
 2. Be sure that your database is the current one
 3. Create a table named `inventory` with the following fields (read the **full** question before attempting any SQL)
-   * `item`
-   * `unit`
-   * `amount`
-   * `id`
+   * `item` – a string (think `VARCHAR`) that describes the item
+   * `unit` – a string that indicates the unit that we'll use to count this `item` in our inventory (gallons, bags, ounces, pieces, etc.)
+   * `amount` – an integer indicating how many we have in our inventory
+   * `id` – the unique ID for this item (more below)
   
 I want you to use the following description for the `id` field:
 
@@ -110,7 +114,7 @@ From the link provided above you should recall that a **PRIMARY KEY** is an impo
 * has a unique value for each row (super key)
 * is no longer a super key if any attribute is dropped
 
-In the column definition I provided above, you have told the DBMS that the column `id` serves as the primary key for the table.  The extra `AUTO_INCREMENT` ensures that this field (see how I've used all 3 of the words?) has a unique value for each row, and `NOT NULL` ensures that there is a value in the field… hence it really is a primary key.  (DBMS allow people to cheat a bit-- technically a column can't serve as a PRIMARY KEY if it has a NULL value)
+In the column definition I provided above, you have told the DBMS that the column `id` serves as the primary key for the table.  The extra `AUTO_INCREMENT` ensures that this field (see how I've used all 3 of the words?) has a unique value for each row, and `NOT NULL` ensures that there is a value in the field… hence it really is a primary key.  (DBMS allow people to cheat a bit – technically a column can't serve as a PRIMARY KEY if it has a NULL value)
 
 ### Giving it some data
 
@@ -145,22 +149,26 @@ You can rename a column using the `AS <new name>` clause (note the use of quotes
 		SELECT item AS stuff, amount, unit AS 'counting thing' FROM inventory;
 ```
 #### Getting fancy with columns
-SQL has a fairly large collection of functions.  Some are standard (based upon WHICH version of SQL you are using), but just about everybody has their own collection... just a bit below is MariaDB's functions and operators.  Pay particular attention to the comparison operators and how they deal with NULL.  Also notice that some functions show up as SQL keywords (look at BETWEEN).  After the link I will provide a few comments on what to ignore or skim.  Pay attention to the rest:
+SQL has a fairly large collection of functions.  Some are standard (what what's "standard" depends on _which_ version of SQL you are using), but just about everybody has their own collection. Have a look at MariaDB's collection of functions and operators:
 
-<https://mariadb.com/kb/en/functions-and-operators/>
+   * [An alphabetical list of all functions and operators](https://mariadb.com/kb/en/library/function-and-operator-reference/)
+   * [A list of built-in functions organized by type and kind](https://mariadb.com/kb/en/library/built-in-functions/)
+
+Pay particular attention to the comparison operators and how they deal with NULL.  Also notice that some functions show up as SQL keywords (look at BETWEEN).
 
 Here are a few things to keep in mind:
-* Ignore the Dynamic Columns functions for now-- they're a way for us to get around some of the limitations of relational database and to let us interface with a NOSQL database like Cassandra.  (I'm hoping to get back to them near the end of the course).
-* For the moment, the function that are used with GROUP BY will remain mysterious (we'll fix that soon).
+
+* Ignore the Dynamic Columns functions for now – they're a way for us to get around some of the limitations of relational database and to let us interface with a NOSQL database like Cassandra.  (We might get back to them near the end of the course).
+* For the moment, the functions that are used with GROUP BY will remain mysterious (we'll fix that soon).
 * We're not going to go into the GEOMETRY and GEOGRAPHY functions (but they might make a good group project... hint hint)
 * Skim over the Miscellaneous Functions
 * Ignore anything about user-defined functions, spider functions, and analyze (for now).
 
-NOTE:  hidden in the string functions (to which you WANT to pay attention) are the functions that deal with regular expressions.  This is useful-- but not as powerful as some regular expression engines (ask me if you don't know what a regular expression is).  For reference here's the direct link:  https://mariadb.com/kb/en/regular-expressions-overview/ 
+NOTE:  hidden in the string functions (to which you WANT to pay attention) are the functions that deal with regular expressions.  This is useful – but not as powerful as some regular expression engines (ask me if you don't know what a regular expression is).  Check out [MariaDB's Regular Expression Overview](https://mariadb.com/kb/en/regular-expressions-overview/) for the details.
 
 It might not be clear from the documentation (unless you look very closely), but things like `&&` and `AND` are synonyms. 
 
-The functions can be used in column list and can use columns as arguments:
+The functions can be used in column lists and can use columns as arguments:
 
 ```
 SELECT left(item,3) AS leftiest FROM inventory;
