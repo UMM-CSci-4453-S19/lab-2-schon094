@@ -98,7 +98,7 @@ Our eventual goal is to make a *point of sales* system, so we are going to start
 3. Create a table named `inventory` with the following fields (read the **full** question before attempting any SQL)
    * `item` – a string (think `VARCHAR`) that describes the item
    * `unit` – a string that indicates the unit that we'll use to count this `item` in our inventory (gallons, bags, ounces, pieces, etc.)
-   * `amount` – an integer indicating how many we have in our inventory
+   * `amount` – an integer indicating how many we have in our inventory (should this ever be negative?)
    * `id` – the unique ID for this item (more below)
   
 I want you to use the following description for the `id` field:
@@ -148,6 +148,7 @@ You can rename a column using the `AS <new name>` clause (note the use of quotes
 		SELECT item AS 'mega stuff' FROM inventory;
 		SELECT item AS stuff, amount, unit AS 'counting thing' FROM inventory;
 ```
+
 #### Getting fancy with columns
 SQL has a fairly large collection of functions.  Some are standard (what what's "standard" depends on _which_ version of SQL you are using), but just about everybody has their own collection. Have a look at MariaDB's collection of functions and operators:
 
@@ -206,7 +207,9 @@ Think of the condition as being applied to each row one at a time and only when 
 ```
 SELECT * FROM inventory WHERE item REGEXP 'n';
 ```
+
 OR
+
 ```
 SELECT * FROM inventory WHERE item RLIKE "n";
 ```
@@ -214,10 +217,13 @@ SELECT * FROM inventory WHERE item RLIKE "n";
 Note.  It's not case sensitive.
 	
 If I wanted all rows where item STARTED with n:
+
 ```
 SELECT * FROM inventory WHERE item REGEXP '^n';
 ```
+
 OR:
+
 ```
 SELECT * FROM inventory WHERE item LIKE "n%";
 ```	
@@ -303,7 +309,7 @@ Here's what mine looked like (your mileage may vary):
 Oh... wait.... it looks as if I made a mistake.  Let's fix `Versoin A` and change it to the proper `Version A`:
 
 ```
-UPDATE prices SET notes="Version A" WHERE id =2;
+UPDATE prices SET notes="Version A" WHERE id=2;
 ```
 
 (be careful-- you can accidently change ALL the values in a particular field if you are not careful.		
@@ -345,16 +351,19 @@ SELECT * FROM inventory,prices;
 ```
 
 To verify that the order of tables in the FROM clause matter try this:
+
 ```
 SELECT * FROM prices,inventory;
 ```
 
 Now try this one:
+
 ```
 SELECT * FROM inventory, inventory;
 ```
 
 That one should give an error.... but this one won't:
+
 ```
 SELECT * FROM inventory, inventory AS b;
 ```
@@ -366,35 +375,41 @@ SELECT * FROM inventory, prices;
 ```
 
 Be sure to look carefully at the `item` column.  Now try this:
+
 ```
 SELECT item FROM inventory, prices;
 ```
 
 and try this:
+
 ```
 SELECT item,amount FROM inventory, prices;
 ```
 
-I hope it's clear what's happening.  The `SELECT *` statement with TWO tables takes every row in the first table, and every row in the second table and concatenates them together into a bigger row in every possible combination.  (Math people-- this is an example of a Cartesian Product).
+I hope it's clear what's happening.  The `SELECT *` statement with TWO tables takes every row in the first table, and every row in the second table and concatenates them together into a bigger row in every possible combination.  (Math people: this is an example of a Cartesian Product).
 		
 If the first table has 10 rows, and the second table has 3 rows, then the JOIN (that's a technical term) has 30 rows.  
 		
 There ARE a few limitations in select columns... Try this:
+
 ```
 SELECT id FROM inventory, prices;
 ```
 
 Notice the  problem is the ambiguity.  Fix it like this:
+
 ```
 SELECT inventory.id FROM inventory,prices;
 ```
 
 and 
+
 ```
 SELECT prices.id FROM inventory,prices;
 ```
 
-Notice that the values are different (although there are still the same number of entries.)
+Notice that the values are different (although there are still the same number of entries.) On the other hand these two queries:
+
 ```
 SELECT inventory.id FROM inventory,prices;
 SELECT inventory.id FROM prices,inventory;
@@ -403,35 +418,50 @@ SELECT inventory.id FROM prices,inventory;
 (at least in my case) gives the same results... this actually surprises me, and I am pretty certain it has to do with MariaDB's attempt to optimize queries (another name for the output from a `SELECT` statement).
 		
 That still doesn't help us fix
+
 ```
 SELECT id FROM inventory, inventory as B;
 ```
 
 or does it?  Try this:
+
 ```
 SELECT B.id FROM inventory, inventory as B;
 ```
 
 Or this:
+
 ```
 SELECT bob.id  FROM inventory AS bob, inventory as doug;
 SELECT doug.id  FROM inventory AS bob, inventory as doug;
 ```		
 
 And now you are ready... try this:
+
 ```
 SELECT * FROM inventory, prices WHERE inventory.id=prices.id;
 ```
 
-See the power?  You can bind these tables together in a way that allows you to extract everything you need.  There are other ways to do the same thing:
+See the power?  You can bind these tables together in a way that allows you to extract everything you need. (Also note that long queries can expand across multiple lines, which is quite common for complex queries. The interpreter will consider everything up to the semicolon as a single query.)
+  
+There are other ways to do the same thing:
+
 ```
-SELECT * FROM inventory INNER JOIN prices ON inventory.id=prices.id;
-SELECT * FROM inventory CROSS JOIN prices ON inventory.id=prices.id;
+SELECT * FROM inventory 
+INNER JOIN prices ON inventory.id=prices.id;
+```
+
+or
+
+```
+SELECT * FROM inventory 
+CROSS JOIN prices ON inventory.id=prices.id;
 ```
 
 Notice that before we used the WHERE clause to control which rows to include, now we're using the ON clause in collaboration with the INNER JOIN or CROSS JOIN (they're synonyms) commands.  Functionally this works the same.
 		
 What happens if want to link the tables on the id field, but still want to include data from inventory when there isn't a matching ID value in prices?  Try these (pay careful attention to where the NULL's occur):
+
 ```
 SELECT * FROM inventory LEFT JOIN prices ON inventory.id=prices.id;
 SELECT * FROM inventory RIGHT JOIN prices ON inventory.id=prices.id;
@@ -440,15 +470,16 @@ SELECT * FROM prices RIGHT JOIN inventory ON inventory.id=prices.id;
 ```
 
 You can use this technique when combined with a `WHERE` clause to find rows that have a value in one table, but not a corresponding one  in  the other:
+
 ```
 SELECT * FROM inventory LEFT JOIN prices ON inventory.id=prices.id where prices.id IS NULL;
 ```
 
 Of course, every  `LEFT JOIN` has an equivalent `RIGHT JOIN`.
 		
-There is also (theoretically), an `OUTER JOIN` which, effectively is a combination of the `LEFT JOIN` and the `RIGHT JOIN` (in the way you would expect), however, MariaDB doesn't seem to implement it correctly.
+There is also (theoretically), an `OUTER JOIN` which, effectively is a combination of the `LEFT JOIN` and the `RIGHT JOIN` (in the way you would expect), however, MariaDB doesn't seem to implement it correctly. [Method 2 in "How to Simulate FULL OUTER JOIN in MySQL"](https://www.xaprb.com/blog/2006/05/26/how-to-write-full-outer-join-in-mysql/) does appear to work if you want to explore that.
 
-Before continuing **read the following explanation of SQL joins.  Be sure to do as many of the examples as you can-- in particular create the tables**:   http://www.codinghorror.com/blog/2007/10/a-visual-explanation-of-sql-joins.html (but remember that mariaDB doesn't do `OUTER JOINS` correctly... so some of this knowledge is, for the moment, theoretical).
+Before continuing **read [this explanation of SQL joins](http://www.codinghorror.com/blog/2007/10/a-visual-explanation-of-sql-joins.html). Be sure to do as many of the examples as you can – in particular create the tables and run the queries.** Remember that mariaDB doesn't do `FULL OUTER JOINS` correctly so you'd have to use something like the techniques in "How to simulate FULL OUTER JOIN in MySQL" mentioned above to get those examples to work. Your output may not always be in the same order either; in general because we think of query results as _sets_ the order isn't guaranteed unless you do something to explicitly specify the desired order. (More about that later.)
 
 #### The `EXPLAIN` keyword
 By putting the keyword `EXPLAIN` (or `DESCRIBE`-- they're synonyms) in front of a query you get back a table that tells you something about how mariaDB is attempting to optimize your query:
@@ -462,10 +493,11 @@ EXPLAIN EXTENDED SELECT * FROM inventory, prices where inventory.id=prices.id;
 EXPLAIN SELECT * FROM prices RIGHT JOIN inventory ON inventory.id=prices.id;
 ```
 
-Here's a link for more information… but we still need some background before filling in all the pieces:
-    https://mariadb.com/kb/en/explain/
+[This page](https://mariadb.com/kb/en/library/explain/) has more information… but we still need some background before filling in all the pieces. One cool thing, though, is that it estimates the size of your result, which can be useful if you've got a query that is generating unexpectedly huge results.
 
 ## Put together a small group
+
+**Move this to Canvas!**
 
 We are going to be putting together a sample concession stand/ticket sales application.  Try to figure out who you want to be in your group and spend some time brainstorming the tables and types of interactions that would be necessary.  
 
@@ -475,21 +507,23 @@ Don't invest too heavily in the design.  We will be learning some new technique 
 
 Do this tutorial for reinforcement:  http://www.sqlcourse.com/intro.html
 
-
 ## Checklist of what to do
 
-* Type in the commands I outlined above while reading through the lab (each person should do this)
-* Create the `inventory` table
+* [ ] Type in the commands I outlined above while reading through the lab (each person should do this)
+* [ ] Create the `inventory` table
     * Fields should be item, unit, amount, id (and of reasonable data-types)
     * `id` should be AUTO_INCREMENT, etc
     * There should be 5 or 6 entries in the table
-* Create the `prices` table
+* [ ] Create the `prices` table
    * Fields should be `price`, `notes`, `id`
    * data-types of fields should be as indicated in the lab
    * There should be at least 4 entries in the table
-* Do the examples in the [join tutorial](http://www.codinghorror.com/blog/2007/10/a-visual-explanation-of-sql-joins.html)
-* Do the [sqlcourse tutorial](http://www.sqlcourse.com/intro.html)
-* Do some brainstorming **AS A GROUP**
+* [ ] Do the examples in the [join tutorial](http://www.codinghorror.com/blog/2007/10/a-visual-explanation-of-sql-joins.html)
+* [ ] Do the [sqlcourse tutorial](http://www.sqlcourse.com/intro.html)
+
+**Move this to Canvas**
+
+* [ ] Do some brainstorming **AS A GROUP**
    * Email me your group with the subject `cs4453-f17-groups`.
    * Include a link to your group's github repository
    * Add a file to your Lab 2 repository named `labs2.txt`:
