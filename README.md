@@ -495,14 +495,6 @@ EXPLAIN SELECT * FROM prices RIGHT JOIN inventory ON inventory.id=prices.id;
 
 [This page](https://mariadb.com/kb/en/library/explain/) has more information… but we still need some background before filling in all the pieces. One cool thing, though, is that it estimates the size of your result, which can be useful if you've got a query that is generating unexpectedly huge results.
 
-## Put together a small group
-
-**Move this to Canvas!**
-
-We are going to be putting together a sample concession stand/ticket sales application.  Try to figure out who you want to be in your group and spend some time brainstorming the tables and types of interactions that would be necessary.  
-
-Don't invest too heavily in the design.  We will be learning some new technique soon (in particular, we are going to be discussing **data normalization**).  Email me your group name with the subject `cs4453-f17-groups` and your group's repository.
-
 ## An SQL tutorial
 
 Do this tutorial for reinforcement:  http://www.sqlcourse.com/intro.html
@@ -520,16 +512,6 @@ Do this tutorial for reinforcement:  http://www.sqlcourse.com/intro.html
    * There should be at least 4 entries in the table
 * [ ] Do the examples in the [join tutorial](http://www.codinghorror.com/blog/2007/10/a-visual-explanation-of-sql-joins.html)
 * [ ] Do the [sqlcourse tutorial](http://www.sqlcourse.com/intro.html)
-
-**Move this to Canvas**
-
-* [ ] Do some brainstorming **AS A GROUP**
-   * Email me your group with the subject `cs4453-f17-groups`.
-   * Include a link to your group's github repository
-   * Add a file to your Lab 2 repository named `labs2.txt`:
-      * indicating group members
-      * indicating your thoughts about the data and user interactions with the data
-   
 
 ## References
 
